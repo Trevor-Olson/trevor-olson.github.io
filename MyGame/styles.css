@@ -1,0 +1,18 @@
+#gameContainer
+{
+    width: 800px;
+    margin: auto;
+}
+#gameScreen
+{
+    border: 1px solid black;
+    background-color: white;
+}
+body
+{
+    background-color: darkgrey;
+}
+img
+{
+    display: none;
+}

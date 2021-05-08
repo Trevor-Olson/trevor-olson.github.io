@@ -1,0 +1,13 @@
+Things to add:
+    work on collison between player and ball    
+        where car hits ball ( left/right )
+    give car boost
+    add walls
+    add ceiling
+    add goals
+    second player
+
+
+known bugs:
+    player can slowly clip through ball near the walls
+    ball doesn't settle on top of car
