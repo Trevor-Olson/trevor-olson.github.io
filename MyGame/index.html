@@ -8,13 +8,26 @@
 
 <body>
     <div id="gameContainer">
-        <img id="img_ball" src="Soccer-Ball.jpg" >
-        <img id="img_grass" src="grass.jpg" >
-        <img id="img_player_right" src="player-facing-right.jpg" >
-        <img id="img_player_left" src="player-facing-left.jpg" >
-        <canvas id="gameScreen" height="600" width="800"></canvas>
+        <img id="img_grass" src="images\grass.png" >
+        <img id ="img_blue_goal" src="images\blue-goal.png" >
+        <img id ="img_orange_goal" src="images\orange-goal.png" >
+        <img id ="img_blue_wall" src="images\blue-wall.png" >
+        <img id ="img_orange_wall" src="images\orange-wall.png" >
+        <img id="img_ball" src="images\Soccer-Ball.png" >
+        <img id="img_player1_right" src="images\blue-octane-right.png" >
+        <img id="img_player1_left" src="images\blue-octane-left.png" >
+        <img id="img_player2_right" src="images\player-facing-right.png" >
+        <img id="img_player2_left" src="images\player-facing-left.png" >
+        <canvas id="gameScreen" height="210" width="1600"></canvas>
     </div>
-    <script type="text/javascript" src="index.js"></script>
+    <script src="src/collision.js"></script>
+    <script src="src/inputhandler.js"></script>
+    <script src="src/ball.js"></script>
+    <script src="src/player.js"></script>
+    <script src="src/scoreboard.js"></script>
+    <script src="src/game.js"></script>
+    <script src="src/index.js"></script>
+    
 </body>
 
 </html>

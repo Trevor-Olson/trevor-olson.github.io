@@ -1,13 +1,19 @@
 Things to add:
-    work on collison between player and ball    
+    work on collison   
         where car hits ball ( left/right )
-    give car boost
-    add walls
-    add ceiling
-    add goals
-    second player
+        ball speed
+        player vs player collision
+
+    kickoff countdown
+    "player 1 scored"
+    game timer
+    player 2 car
+    resizeable
+    kickoff mechanics
+    increase height of the field
+    ball/ player collission with crossbar
 
 
 known bugs:
-    player can slowly clip through ball near the walls
     ball doesn't settle on top of car
+    one player will take off faster?
