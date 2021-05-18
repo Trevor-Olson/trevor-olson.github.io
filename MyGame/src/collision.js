@@ -17,56 +17,72 @@ function playerBallCollision(gamePlayer, gameBall) {
     let playerYSpeed = gamePlayer.speed.y;
 
     // check for ball/player collision
-
-    // check for vetical allignment
+    // check for vetical allignment ... ball hits the front or back of the car
     if (!(bottomOfBall < topOfPlayer || topOfBall > bottomOfPlayer)) {
         // left of ball hits right of player
         if (leftOfBall <= rightOfPlayer && rightOfBall > rightOfPlayer) {
             // add the cars speed to the ball speed and check for maxspeed
             gameBall.speed.x = Math.abs(playerXSpeed) + Math.abs(gameBall.speed.x);
+            // prevent the ball from meshing through player
+            gameBall.position.x = rightOfPlayer;
             if (Math.abs(gameBall.speed.x) >= gameBall.maxSpeed) {
                 gameBall.speed.x = gameBall.maxSpeed;
             }
             // check if the ball should go up, down or straight
             if (midYOfBall < topOfPlayer) // the player hits the lower half of the ball
             {
-                gameBall.speed.y = gameBall.speed.x;
+                gameBall.speed.y = gameBall.speed.x / 2;
             }
             else if (midYOfBall > bottomOfPlayer) // player hits the top half of the ball
             {
-                gameBall.speed.y = -gameBall.speed.x;
+                gameBall.speed.y = -gameBall.speed.x / 2;
             }
+            return;
         }
         // right of ball hits left of player
         else if (rightOfBall >= leftOfPlayer && leftOfBall < leftOfPlayer) {
             // add the cars speed to the ball speed and check for maxspeed
             gameBall.speed.x = -Math.abs(playerXSpeed) - Math.abs(gameBall.speed.x);
+            // prevent the ball from meshing through player
+            gameBall.position.x = leftOfPlayer - gameBall.width;
             if (-gameBall.speed.x >= gameBall.maxSpeed) {
                 gameBall.speed.x = -gameBall.maxSpeed;
             }
             // check if the ball should go up, down or straight
             if (midYOfBall < topOfPlayer) // the player hits the lower half of the ball
             {
-                gameBall.speed.y = -gameBall.speed.x;
+                gameBall.speed.y = -gameBall.speed.x / 2;
             }
             else if (midYOfBall > bottomOfPlayer) // player hits the top half of the ball
             {
-                gameBall.speed.y = gameBall.speed.x;
+                gameBall.speed.y = gameBall.speed.x / 2;
             }
+            return;
         }
     }
-    // check for horizantal allignment
+    // check for horizantal allignment ... ball hits the top or bottom of the car
     if ( !(leftOfBall > rightOfPlayer || rightOfBall < leftOfPlayer) ) 
     {
+        // ball hits the top of the player
         if (bottomOfBall >= topOfPlayer && topOfBall < topOfPlayer)
         {
             gameBall.position.y = topOfPlayer - gameBall.width; // keep the ball from meshing through player
-            gameBall.speed.y = -Math.abs(gameBall.speed.y * gameBall.speed.loss + playerYSpeed);  // combine the players vertical speed with the balls
+            gameBall.speed.y = -Math.abs(gameBall.speed.y * gameBall.speed.loss * gameBall.speed.g + playerYSpeed);  // combine the players vertical speed with the balls
             if (Math.abs(gameBall.speed.y) >= gameBall.maxSpeed)   // check for the maxspeed
             {
                 gameBall.speed.y = - gameBall.maxSpeed;
             }
+            // check if the ball should go left or right
+            if ( midXOfBall < midXOfPlayer ) // the ball hits the left half of the player
+            {
+                gameBall.speed.x = gameBall.speed.y / 2;
+            }
+            else if (midXOfBall > midXOfPlayer ) // the ball hits the right half of the player
+            {
+                gameBall.speed.x = -gameBall.speed.y / 2;
+            }
         }
+        // ball hits the bottom of the player
         else if (topOfBall <= bottomOfPlayer && bottomOfBall > bottomOfPlayer) {
             gamePlayer.position.y = topOfBall - gamePlayer.height;
             gameBall.speed.y = -gameBall.speed.y;
@@ -122,7 +138,7 @@ function ballGoalCollision( gameBall )
          && gameBall.position.y < 200 )
     {
         gameBall.game.scoreBoard.blueScored();
-        gameBall.game.reset();
+        gameBall.game.reset( "Player 1 Scored!" );
         return;
 
     }
@@ -131,6 +147,6 @@ function ballGoalCollision( gameBall )
          && gameBall.position.y < 200)
     {
         gameBall.game.scoreBoard.orangeScored();
-        gameBall.game.reset();
+        gameBall.game.reset( "Player 2 Scored!" );
     }
 }

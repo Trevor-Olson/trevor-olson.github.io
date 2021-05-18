@@ -1,19 +1,13 @@
 Things to add:
-    work on collison   
-        where car hits ball ( left/right )
-        ball speed
-        player vs player collision
-
-    kickoff countdown
-    "player 1 scored"
-    game timer
-    player 2 car
     resizeable
-    kickoff mechanics
     increase height of the field
-    ball/ player collission with crossbar
+    ball / player collission with crossbar
+    player / player collision
 
 
 known bugs:
-    ball doesn't settle on top of car
+    ball doesn't fully settle on top of car
     one player will take off faster?
+    ball can go through a player if pinched between two players 
+        ( always goes through playr 1)
+    ball can go through ceiling if pinched between ceiling and player

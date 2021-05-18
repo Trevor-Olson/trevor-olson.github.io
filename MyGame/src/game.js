@@ -2,6 +2,8 @@ const GAMESTATE = {
     PAUSED: 0,
     RUNNING: 1,
     MENU: 2,
+    GOAL_RESET: 3,
+    GAMEOVER: 4,
 }
 
 
@@ -15,8 +17,10 @@ class Game {
         this.player2 = new Player(this);
         this.scoreBoard = new Scoreboard( this.gameWidth, this.gameHeight );
         this.ball = new Ball(this);
-        new InputHandler( this );
+        this.inputHandler = new InputHandler( this );
         this.gameObjects = [];
+        this.lastTeamToScore;
+        this.countDown = 75;
     }
     
     startGame() 
@@ -35,7 +39,7 @@ class Game {
         this.player2.imageRight = document.getElementById('img_player2_right');
         this.player2.imageLeft = document.getElementById('img_player2_left');
         // set the game to run
-        this.gameState = GAMESTATE.RUNNING;
+        this.gameState = GAMESTATE.GOAL_RESET;
     }
     pauseGame() {
         if ( this.gameState === GAMESTATE.PAUSED )
@@ -49,15 +53,27 @@ class Game {
     update(deltaTime) 
     {
         if ( this.gameState === GAMESTATE.PAUSED 
-            || this.gameState === GAMESTATE.MENU )
+            || this.gameState === GAMESTATE.MENU
+            || this.gameState === GAMESTATE.GOAL_RESET )
         {
             return;
         }
         this.gameObjects.forEach((object) => object.update(deltaTime));
+        // if the game time is up and the ball hit the floor the game is over
+        if ( this.scoreBoard.timer.timeLeft == 0 
+            && this.ball.position.y == this.ball.floor )
+        {
+            this.gameState = GAMESTATE.GAMEOVER;
+        }
     }
     draw(ctx) {
-        this.gameObjects.forEach((object) => object.draw(ctx));
-
+        // game is running
+        if ( this.gameState === GAMESTATE.RUNNING
+             || this.gameState == GAMESTATE.GOAL_RESET
+             || this.gameState == GAMESTATE.PAUSED )
+        {
+            this.gameObjects.forEach((object) => object.draw(ctx));
+        }
         // pause screen
         if ( this.gameState === GAMESTATE.PAUSED )
         { 
@@ -89,9 +105,9 @@ class Game {
             ctx.fillText( "press \"p\" to unpause", this.gameWidth / 2, this.gameHeight / 2 + 40 );
         }
         // menu screen
-        else if ( this.gameState === GAMESTATE.MENU )
+        if ( this.gameState === GAMESTATE.MENU )
         { 
-            // grey out the screen
+            // black out the screen
             ctx.rect(0, 0, this.gameWidth, this.gameHeight);
             ctx.fillStyle = "rgba(0,0,0,1)";
             ctx.fill();
@@ -120,15 +136,77 @@ class Game {
             // press p to pause
             ctx.fillText( "press \"p\" to pause", this.gameWidth / 2, this.gameHeight / 2 + 40 );
         }
-        
+        // goal was scored
+        if ( this.gameState === GAMESTATE.GOAL_RESET )
+        {
+            ctx.font = "30px Arial";
+            ctx.fillStyle = "black";
+            ctx.textAlign = "center";
+            if ( this.countDown > 75 ) // "Player X Scored!"
+            {
+                ctx.fillText( this.lastTeamToScore,
+                    this.gameWidth / 2, this.gameHeight / 2);
+            }
+            else if ( this.countDown > 50 ) // print 3
+            {
+                ctx.fillText( 3, this.gameWidth / 2, this.gameHeight / 2);
+            }
+            else if ( this.countDown > 25 ) // print 2
+            {
+                ctx.fillText( 2, this.gameWidth / 2, this.gameHeight / 2);
+            }
+            else if ( this.countDown > 0 ) // print 1
+            {
+                ctx.fillText( 1, this.gameWidth / 2, this.gameHeight / 2);
+            }
+            else    // print go
+            {
+                ctx.fillText( "GO!", this.gameWidth / 2, this.gameHeight / 2);
+                this.gameState = GAMESTATE.RUNNING;
+            }                        
+            this.countDown--;  
+        }
+        // if the game is over
+        if ( this.gameState === GAMESTATE.GAMEOVER )
+        {
+            // grey out the screen
+            ctx.rect(0, 0, this.gameWidth, this.gameHeight);
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.fill();
+            // print "The Winner is ..."
+            ctx.font = "30px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            if ( this.scoreBoard.blueScore > this.scoreBoard.orangeScore )
+            {
+                ctx.fillText("Player 1 won!", this.gameWidth / 2, this.gameHeight / 2);
+                ctx.fillText( 
+                    this.scoreBoard.blueScore + " : " + this.scoreBoard.orangeScore,
+                    this.gameWidth / 2, this.gameHeight / 2 + 30 );
+                
+            }
+            else
+            {
+                ctx.fillText("Player 2 won!", this.gameWidth / 2, this.gameHeight / 2);
+                ctx.fillText( 
+                    this.scoreBoard.blueScore + " : " + this.scoreBoard.orangeScore,
+                    this.gameWidth / 2, this.gameHeight / 2 + 30 );
+            }
+            
+        }
     }
-    reset()
+    reset( TeamScored )
     {
+        // reset player input
+        this.inputHandler.keysPressed = [];
+
+        this.lastTeamToScore = TeamScored;
+        this.gameState = GAMESTATE.GOAL_RESET;
         // set player1's position
         this.player1.position.x = 210;
         this.player1.position.y = this.player1.floor;
         // make player1 face the right way
-        this.player2.speed.last = 1;
+        this.player1.speed.last = 1;
         // reset player1's speed
         this.player1.speed.x = 0;
         this.player1.speed.y = 0;
@@ -147,5 +225,10 @@ class Game {
         this.ball.position.y = this.ball.floor; 
         this.ball.speed.x = 0;
         this.ball.speed.y = 0;
+
+        // reset countdown
+        this.countDown = 100;
+
+
     }
 }
